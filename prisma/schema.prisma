@@ -16,34 +16,48 @@ model User {
 }
 
 model Category {
-  id          String   @id @default(cuid())
-  name        String   @unique
-  deletedAt   DateTime?
-  items       Item[]
+  id        String    @id @default(cuid())
+  name      String    @unique
+  deletedAt DateTime?
+  items     Item[]
 }
 
 model Location {
-  id          String         @id @default(cuid())
-  name        String         @unique
-  isFreezer   Boolean        @default(false)
-  deletedAt   DateTime?
-  items       ItemLocation[]
-  counts      CountEntry[]
+  id        String         @id @default(cuid())
+  name      String         @unique
+  isFreezer Boolean        @default(false)
+  deletedAt DateTime?
+  items     ItemLocation[]
+  counts    CountEntry[]
 }
 
 model Item {
-  id             String         @id @default(cuid())
-  name           String
-  categoryId     String
-  category       Category       @relation(fields: [categoryId], references: [id])
-  eachesPerInner Int?
-  innersPerCase  Int?
-  canFreeze      Boolean        @default(false)
-  deletedAt      DateTime?
-  locations      ItemLocation[]
-  counts         CountEntry[]
+  id         String         @id @default(cuid())
+  name       String
+  categoryId String
+  category   Category       @relation(fields: [categoryId], references: [id])
+  canFreeze  Boolean        @default(false)
+  deletedAt  DateTime?
+  units      ItemUnit[]
+  locations  ItemLocation[]
+  counts     CountEntry[]
 
   @@index([categoryId])
+}
+
+// Ordered packaging levels for an item.
+// level 0 = smallest unit (eaches), level 1 = next up, etc.
+model ItemUnit {
+  id           String      @id @default(cuid())
+  itemId       String
+  item         Item        @relation(fields: [itemId], references: [id])
+  name         String // "each", "inner", "sleeve", "case", "bag", etc.
+  level        Int // 0 = base unit, 1 = next, 2 = next...
+  qtyPerParent Int? // null for base unit; otherwise how many of this fit in the next level up
+  unitCounts   UnitCount[]
+
+  @@unique([itemId, level])
+  @@index([itemId])
 }
 
 model ItemLocation {
@@ -77,14 +91,23 @@ model CountEntry {
   item       Item         @relation(fields: [itemId], references: [id])
   locationId String
   location   Location     @relation(fields: [locationId], references: [id])
-  eaches     Int          @default(0)
-  inners     Int          @default(0)
-  cases      Int          @default(0)
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
+  counts     UnitCount[]
 
   @@unique([sessionId, itemId, locationId])
   @@index([sessionId])
   @@index([itemId])
   @@index([locationId])
+}
+
+model UnitCount {
+  id           String     @id @default(cuid())
+  countEntryId String
+  countEntry   CountEntry @relation(fields: [countEntryId], references: [id], onDelete: Cascade)
+  unitId       String
+  unit         ItemUnit   @relation(fields: [unitId], references: [id])
+  quantity     Int        @default(0)
+
+  @@unique([countEntryId, unitId])
 }
