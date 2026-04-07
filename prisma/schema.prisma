@@ -1,0 +1,89 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String         @id @default(cuid())
+  email     String         @unique
+  name      String
+  createdAt DateTime       @default(now())
+  sessions  CountSession[]
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  deletedAt   DateTime?
+  items       Item[]
+}
+
+model Location {
+  id          String         @id @default(cuid())
+  name        String         @unique
+  isFreezer   Boolean        @default(false)
+  deletedAt   DateTime?
+  items       ItemLocation[]
+  counts      CountEntry[]
+}
+
+model Item {
+  id             String         @id @default(cuid())
+  name           String
+  categoryId     String
+  category       Category       @relation(fields: [categoryId], references: [id])
+  eachesPerInner Int?
+  innersPerCase  Int?
+  canFreeze      Boolean        @default(false)
+  deletedAt      DateTime?
+  locations      ItemLocation[]
+  counts         CountEntry[]
+
+  @@index([categoryId])
+}
+
+model ItemLocation {
+  itemId     String
+  locationId String
+  item       Item     @relation(fields: [itemId], references: [id])
+  location   Location @relation(fields: [locationId], references: [id])
+
+  @@id([itemId, locationId])
+  @@index([locationId])
+}
+
+model CountSession {
+  id        String       @id @default(cuid())
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  notes     String?
+  userId    String
+  user      User         @relation(fields: [userId], references: [id])
+  entries   CountEntry[]
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model CountEntry {
+  id         String       @id @default(cuid())
+  sessionId  String
+  session    CountSession @relation(fields: [sessionId], references: [id])
+  itemId     String
+  item       Item         @relation(fields: [itemId], references: [id])
+  locationId String
+  location   Location     @relation(fields: [locationId], references: [id])
+  eaches     Int          @default(0)
+  inners     Int          @default(0)
+  cases      Int          @default(0)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  @@unique([sessionId, itemId, locationId])
+  @@index([sessionId])
+  @@index([itemId])
+  @@index([locationId])
+}
