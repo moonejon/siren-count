@@ -1,4 +1,4 @@
-import { AbsoluteCenter } from "@chakra-ui/react";
+import { Center } from "@chakra-ui/react";
 import AddItem from "../components/item-configuration/add-item";
 
 
@@ -7,9 +7,9 @@ export default function Home() {
   return (
     <div>
       <main>
-        <AbsoluteCenter>
+        <Center h="100vh">
          <AddItem />
-        </AbsoluteCenter>
+        </Center>
       </main>
     </div>
   );
