@@ -98,13 +98,14 @@ export default function AddItem() {
           <Flex justify="right" mt="4">
             <ButtonGroup size="md" variant="outline">
               {step > 0 && (
-                <Steps.PrevTrigger asChild>
-                  <Button>Prev</Button>
-                </Steps.PrevTrigger>
+                <Button onClick={() => setStep(step - 1)}>Prev</Button>
               )}
-              <Steps.NextTrigger asChild>
-                <Button disabled={!category}>Next</Button>
-              </Steps.NextTrigger>
+              <Button
+                disabled={!category}
+                onClick={() => setStep(step + 1)}
+              >
+                Next
+              </Button>
             </ButtonGroup>
           </Flex>
         </Steps.Root>
