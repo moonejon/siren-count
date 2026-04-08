@@ -1,26 +1,14 @@
 import { RadioCard, SimpleGrid } from "@chakra-ui/react";
+import { categoryOptions } from "./constants";
+import type { CategoryValue } from "./types";
 
-export default function Categories({ category, setCategory }: { category: string | null; setCategory: (value: string) => void }) {
-  const categories = [
-    {
-      value: "bakery",
-      label: "Bakery",
-      description: "Loaves, croissants, and pastries",
-    },
-    {
-      value: "breakfast",
-      label: "Breakfast",
-      description: "Sandwiches, egg bites, and wraps",
-    },
-    { value: "lunch", label: "Lunch", description: "Sandwiches and pockets" },
-    {
-      value: "RTD",
-      label: "RTD",
-      description: "Ready-to-eat snacks, boxes, and drinks",
-    },
-    { value: "coffee", label: "Coffee", description: "Bagged coffee" },
-  ];
-
+export default function Categories({
+  category,
+  setCategory,
+}: {
+  category: CategoryValue;
+  setCategory: (value: string) => void;
+}) {
   return (
     <RadioCard.Root
       value={category}
@@ -28,7 +16,7 @@ export default function Categories({ category, setCategory }: { category: string
     >
       <RadioCard.Label>Select item category</RadioCard.Label>
       <SimpleGrid columns={2} gap="3">
-        {categories.map((category) => (
+        {categoryOptions.map((category) => (
           <RadioCard.Item key={category.value} value={category.value}>
             <RadioCard.ItemHiddenInput />
             <RadioCard.ItemControl>

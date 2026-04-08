@@ -6,27 +6,19 @@ import {
   InputGroup,
   NumberInput,
 } from "@chakra-ui/react";
-
-interface ItemDetails {
-  itemName: string;
-  isFrozen: boolean;
-  hasInners: boolean;
-  innersPerCase: string;
-  eachesPerInner: string;
-  eachesPerCase: string;
-}
+import type {
+  DetailsFormValues,
+  HandleDetailsInputChange,
+} from "./types";
 
 export default function Details({
   details,
   eachesPerCase,
   handleDetailsInputChange,
 }: {
-  details: ItemDetails;
+  details: DetailsFormValues;
   eachesPerCase: string;
-  handleDetailsInputChange: (
-    field: string,
-    value: string | number | boolean,
-  ) => void;
+  handleDetailsInputChange: HandleDetailsInputChange;
 }) {
   return (
     <Fieldset.Root spaceY={20}>
